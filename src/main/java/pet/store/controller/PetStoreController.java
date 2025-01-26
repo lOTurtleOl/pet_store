@@ -13,7 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.extern.slf4j.Slf4j;
 import pet.store.controller.model.PetStoreCustomer;
-import pet.store.service.StoreService;
+import pet.store.controller.model.PetStoreData;
+import pet.store.service.PetStoreService;
 
 /**
  * 
@@ -21,16 +22,23 @@ import pet.store.service.StoreService;
 @RestController
 @RequestMapping("/pet_store")
 @Slf4j
-public class StoreController {
+public class PetStoreController {
 	
 	@Autowired
-	private StoreService storeService;
+	private PetStoreService petStoreService;
+	
+	@PostMapping("/pet_store")
+	@ResponseStatus(code = HttpStatus.CREATED)	
+	public PetStoreData insertPetStore(@RequestBody PetStoreData petStoreData) {
+		log.info("Creating pet store a{}", petStoreData);
+		return petStoreService.savePetStore(petStoreData);
+	}
 	
 	@PostMapping("/customer")
 	@ResponseStatus(code = HttpStatus.CREATED)
 	public PetStoreCustomer insertCustomer(@RequestBody PetStoreCustomer customerData) {
 		log.info("Creating customer a{}", customerData);
-		return storeService.saveCustomer(customerData);
+		return petStoreService.saveCustomer(customerData);
 	}
 			
 }
