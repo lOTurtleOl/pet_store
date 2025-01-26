@@ -48,13 +48,17 @@ public class PetStoreData {
 		
 		if (petStore.getEmployees() != null) {
 			for (Employee employee : petStore.getEmployees()) {
-				this.employees.add(new PetStoreEmployee(employee));
+				if (employee != null) {
+					this.employees.add(new PetStoreEmployee(employee));
+				}
 			}
 		}
 		
 		if (petStore.getCustomers() != null) {
 			for (Customer customer : petStore.getCustomers()) {
-				this.customers.add(new PetStoreCustomer(customer));
+				if (customer != null) {
+					this.customers.add(new PetStoreCustomer(customer));
+				}
 			}
 		}
 	}
