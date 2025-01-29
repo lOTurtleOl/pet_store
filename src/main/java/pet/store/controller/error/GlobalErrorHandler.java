@@ -21,7 +21,7 @@ public class GlobalErrorHandler {
 	@ExceptionHandler(NoSuchElementException.class) // specifies that the method handles this exception
 	public Map<String, String> handleNoSuchElementException(NoSuchElementException ex) {
 		// Log the error
-		log.error("NoSuchElementException: {}", ex.toString());
+		log.error("Exception: {}", ex.toString());
 		
 		// Return a map with a "message" key
 		return Map.of("message", ex.toString());

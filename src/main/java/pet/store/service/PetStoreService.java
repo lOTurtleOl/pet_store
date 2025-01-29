@@ -7,6 +7,7 @@ import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import pet.store.controller.model.PetStoreCustomer;
 import pet.store.controller.model.PetStoreData;
@@ -22,6 +23,19 @@ public class PetStoreService {
 	@Autowired
 	private PetStoreDao petStoreDao;
 
+	
+	/**
+	 * @param petStoreData
+	 * @return
+	 */
+	@Transactional(readOnly = false)
+	public PetStoreData savePetStore(PetStoreData petStoreData) {
+		PetStore petStore = findOrCreatePetStore(petStoreData.getPetStoreId());
+		copyPetStoreFields(petStore, petStoreData);
+		PetStore savedPetStore = petStoreDao.save(petStore);
+		return new PetStoreData(savedPetStore);
+	}
+	
 	/**
 	 * @param customerData
 	 * @return
@@ -31,16 +45,7 @@ public class PetStoreService {
 		return null;
 	}
 
-	/**
-	 * @param petStoreData
-	 * @return
-	 */
-	public PetStoreData savePetStore(PetStoreData petStoreData) {
-		PetStore petStore = findOrCreatePetStore(petStoreData.getPetStoreId());
-		copyPetStoreFields(petStore, petStoreData);
-		PetStore savedPetStore = petStoreDao.save(petStore);
-		return new PetStoreData(savedPetStore);
-	}
+	
 
 	/**
 	 * @param petStore
@@ -52,6 +57,7 @@ public class PetStoreService {
 		petStore.setCity(petStoreData.getCity());
 		petStore.setState(petStoreData.getState());
 		petStore.setZip(petStoreData.getZip());
+		petStore.setPetStoreId(petStoreData.getPetStoreId());
 	}
 
 	/**

@@ -20,9 +20,9 @@ public class PetStoreCustomer {
 	private String email;	
 	
 	public PetStoreCustomer(Customer customer) {
-		this.id = customer.getId();
-		this.firstName = customer.getFirstName();
-		this.lastName = customer.getLastName();
-		this.email = customer.getEmail();
+		id = customer.getId();
+		firstName = customer.getFirstName();
+		lastName = customer.getLastName();
+		email = customer.getEmail();
 	}
 }

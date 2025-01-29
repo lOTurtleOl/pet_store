@@ -38,28 +38,29 @@ public class PetStoreData {
 	private Set<PetStoreCustomer> customers = new HashSet<>();
 	
 	public PetStoreData(PetStore petStore) { // go through and map all petStoreData fields to their respective entity field values
-		this.petStoreId = petStore.getPetStoreId();
-		this.petStoreName = petStore.getPetStoreName();
-		this.address = petStore.getAddress();
-		this.city = petStore.getCity();
-		this.state = petStore.getState();
-		this.zip = petStore.getZip();
-		this.phone = petStore.getPhone();
-		
-		if (petStore.getEmployees() != null) {
-			for (Employee employee : petStore.getEmployees()) {
-				if (employee != null) {
-					this.employees.add(new PetStoreEmployee(employee));
-				}
-			}
-		}
+		petStoreId = petStore.getPetStoreId();
+		petStoreName = petStore.getPetStoreName();
+		address = petStore.getAddress();
+		city = petStore.getCity();
+		state = petStore.getState();
+		zip = petStore.getZip();
+		phone = petStore.getPhone();
 		
 		if (petStore.getCustomers() != null) {
 			for (Customer customer : petStore.getCustomers()) {
 				if (customer != null) {
-					this.customers.add(new PetStoreCustomer(customer));
+					customers.add(new PetStoreCustomer(customer));
 				}
 			}
 		}
+		
+		if (petStore.getEmployees() != null) {
+			for (Employee employee : petStore.getEmployees()) {
+				if (employee != null) {
+					employees.add(new PetStoreEmployee(employee));
+				}
+			}
+		}
+		
 	}
 }

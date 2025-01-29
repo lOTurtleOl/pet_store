@@ -25,10 +25,10 @@ public class PetStoreEmployee {
 	private String jobTitle;
 	
 	public PetStoreEmployee(Employee employee) {
-		this.id = employee.getId();
-		this.firstName = employee.getFirstName();
-		this.lastName = employee.getLastName();
-		this.phone = employee.getPhone();
-		this.jobTitle = employee.getJobTitle();
+		id = employee.getId();
+		firstName = employee.getFirstName();
+		lastName = employee.getLastName();
+		phone = employee.getPhone();
+		jobTitle = employee.getJobTitle();
 	}
 }
