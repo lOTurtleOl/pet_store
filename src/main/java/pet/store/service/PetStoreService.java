@@ -58,6 +58,7 @@ public class PetStoreService {
 		petStore.setState(petStoreData.getState());
 		petStore.setZip(petStoreData.getZip());
 		petStore.setPetStoreId(petStoreData.getPetStoreId());
+		petStore.setPhone(petStoreData.getPhone());
 	}
 
 	/**

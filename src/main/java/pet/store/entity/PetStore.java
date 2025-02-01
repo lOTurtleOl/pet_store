@@ -38,9 +38,9 @@ public class PetStore {
 	
 	private String state;
 	
-	private Long zip;
+	private String zip;
 	
-	private Long phone;
+	private String phone;
 	
 	@EqualsAndHashCode.Exclude
 	@ToString.Exclude

@@ -29,9 +29,9 @@ public class PetStoreData {
 	
 	private String state;
 	
-	private Long zip;
+	private String zip;
 	
-	private Long phone;
+	private String phone;
 	
 	private Set<PetStoreEmployee> employees = new HashSet<>(); // use this data type to reference DTOs instead of referencing the entity directly. This helps avoid recursion.
 	
