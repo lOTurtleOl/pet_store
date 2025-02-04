@@ -3,6 +3,7 @@
  */
 package pet.store.service;
 
+import java.util.HashSet;
 import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,6 @@ import pet.store.controller.model.PetStoreData;
 import pet.store.controller.model.PetStoreEmployee;
 import pet.store.dao.EmployeeDao;
 import pet.store.dao.PetStoreDao;
-import pet.store.dao.employeeDao;
 import pet.store.entity.Employee;
 import pet.store.entity.PetStore;
 
@@ -26,7 +26,7 @@ public class PetStoreService {
 	
 	@Autowired
 	private PetStoreDao petStoreDao;
-	private EmployeeDao employeeDao;
+	
 
 	
 	/**
@@ -90,18 +90,39 @@ public class PetStoreService {
 	 * @param petStoreId
 	 * @return
 	 */
+	@Autowired
+	private EmployeeDao employeeDao;
+	
 	@Transactional(readOnly = false)
 	public PetStoreEmployee saveEmployee(Long petStoreId, PetStoreEmployee employeeData) {
+		System.out.println("Starting saveEmployee...");
+		
 		PetStore petStore = findPetStoreById(petStoreId);
+		System.out.println("Pet store found: " + petStore);
+		
 		Long employeeId = employeeData.getId();
+		System.out.println("Employee ID received: " + employeeId);
+		
 		Employee employee = findOrCreateEmployee(employeeId, petStoreId);
+		System.out.println("Employee found/created: " + employee);
+		
 		copyEmployeeFields(employee, employeeData);
+		System.out.println("Employee fields copied.");
 		
 		employee.setPetStore(petStore);
-		petStore.getEmployees().add(employee);
-		employee = employeeDao.save(employee);
+		System.out.println("Pet store set for employee.");
 		
-		return new PetStoreEmployee(employee);
+		if (petStore.getEmployees() == null) {
+	        petStore.setEmployees(new HashSet<>());
+	    }
+		
+		petStore.getEmployees().add(employee);
+		System.out.println("Employee added to pet store.");
+		
+		Employee savedEmployee = employeeDao.save(employee);
+		System.out.println("Employee saved: " + savedEmployee);
+		
+		return new PetStoreEmployee(savedEmployee);
 	}
 	
 	private Employee findEmployeeById(Long petStoreId, Long employeeId) {

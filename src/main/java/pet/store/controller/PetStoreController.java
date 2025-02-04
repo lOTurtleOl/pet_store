@@ -60,6 +60,6 @@ public class PetStoreController {
 	@ResponseStatus(code = HttpStatus.CREATED)
 	public PetStoreEmployee insertEmployee(@PathVariable Long petStoreId, @RequestBody PetStoreEmployee employeeData) {
 		log.info("Creating employee {}", employeeData);
-		return petStoreService.saveEmployee(employeeData);
+		return petStoreService.saveEmployee(petStoreId, employeeData);
 	}
 }
