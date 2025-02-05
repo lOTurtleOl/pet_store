@@ -4,7 +4,9 @@
 package pet.store.service;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,8 +15,10 @@ import org.springframework.transaction.annotation.Transactional;
 import pet.store.controller.model.PetStoreCustomer;
 import pet.store.controller.model.PetStoreData;
 import pet.store.controller.model.PetStoreEmployee;
+import pet.store.dao.CustomerDao;
 import pet.store.dao.EmployeeDao;
 import pet.store.dao.PetStoreDao;
+import pet.store.entity.Customer;
 import pet.store.entity.Employee;
 import pet.store.entity.PetStore;
 
@@ -41,16 +45,6 @@ public class PetStoreService {
 		return new PetStoreData(savedPetStore);
 	}
 	
-	/**
-	 * @param customerData
-	 * @return
-	 */
-	public PetStoreCustomer saveCustomer(PetStoreCustomer customerData) {
-
-	}
-
-	
-
 	/**
 	 * @param petStore
 	 * @param petStoreData
@@ -156,5 +150,126 @@ public class PetStoreService {
 	 * @param customerData
 	 * @return
 	 */
+	
+	@Autowired
+	private CustomerDao customerDao;
+	
+	@Transactional(readOnly = false)
+	public PetStoreCustomer saveCustomer(Long petStoreId, PetStoreCustomer customerData) {
+		System.out.println("Starting saveCustomer...");
+		
+		PetStore petStore = findPetStoreById(petStoreId);
+		System.out.println("Pet store found: " + petStore);
+		
+		Long customerId = customerData.getId();
+		System.out.println("Customer ID received: " + customerId);
+		
+		Customer customer = findOrCreateCustomer(customerId, petStoreId);
+		System.out.println("Customer found/created: " + customer);
+		
+		copyCustomerFields(customer, customerData);
+		System.out.println("Customer fields copied.");
+		
+		if (customer.getPetStores() == null) {
+			customer.setPetStores(new HashSet<>());
+		}
+		
+		customer.getPetStores().add(petStore);
+		System.out.println("Pet Store added to customer.");
+		
+		if (petStore.getCustomers() == null) {
+	        petStore.setCustomers(new HashSet<>());
+	    }
+		
+		petStore.getCustomers().add(customer);
+		System.out.println("Customer added to pet store.");
+		
+		Customer savedCustomer = customerDao.save(customer);
+		System.out.println("Customer saved: " + savedCustomer);
+		
+		return new PetStoreCustomer(savedCustomer);
+	}
+	
+	private Customer findCustomerById(Long petStoreId, Long customerId) {
+		Customer customer =  customerDao.findById(customerId).orElseThrow(() ->
+		new NoSuchElementException("Customer with ID " + customerId + " not found."));
+		
+		for (PetStore petStore : customer.getPetStores()) {
+			if (petStore.getPetStoreId().equals(petStoreId)) {
+				return customer;
+			}
+		}
+		
+		throw new IllegalArgumentException("Customer with ID " + customerId + " does not belong to Pet Store with ID " + petStoreId);
+		
+		// How to do the same using .stream()
+		// Check if the customer is linked to the pet store
+//	    boolean isLinked = customer.getPetStores().stream()
+//	        .anyMatch(petStore -> petStore.getPetStoreId().equals(petStoreId));
+//
+//	    if (!isLinked) {
+//	        throw new IllegalArgumentException("Customer with ID " + customerId + 
+//	            " does not belong to Pet Store with ID " + petStoreId);
+//	    }
+//
+//	    return customer;
+		
+	}
+	
+	private Customer findOrCreateCustomer(Long customerId, Long petStoreId) {
+		if (customerId == null) {
+			return new Customer();
+		}
+		else {
+			return findCustomerById(petStoreId, customerId);
+		}
+	}
+	
+	private void copyCustomerFields(Customer customer, PetStoreCustomer petStoreData) {
+		customer.setFirstName(petStoreData.getFirstName());
+		customer.setLastName(petStoreData.getLastName());
+		customer.setEmail(petStoreData.getEmail());
+	}
+
+	/**
+	 * 
+	 */
+	@Transactional(readOnly = true)
+	public List<PetStoreData> retrieveAllPetStores() {
+	 List<PetStore> petStores = petStoreDao.findAll();
+	 
+	 return petStores.stream()
+			 .map(this::convertToPetStoreData)
+			 .collect(Collectors.toList());
+	}
+	
+	private PetStoreData convertToPetStoreData(PetStore petStore) {
+		PetStoreData petStoreData = new PetStoreData(petStore);
+		
+		petStoreData.setCustomers(null);
+		petStoreData.setEmployees(null);
+		
+		return petStoreData;
+	}
+
+	/**
+	 * @param petStoreId
+	 * @return
+	 */
+	@Transactional
+	public PetStoreData getPetStoreById(Long petStoreId) {
+		PetStore petStore = findPetStoreById(petStoreId);
+		return convertToPetStoreData(petStore);
+	}
+
+	/**
+	 * @param petStoreId
+	 * @return
+	 */
+	@Transactional
+	public void deletePetStoreById(Long petStoreId) {
+		PetStore petStore = findPetStoreById(petStoreId);
+		petStoreDao.delete(petStore);
+	}
 
 }
