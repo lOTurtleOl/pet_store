@@ -46,20 +46,12 @@ public class PetStoreData {
 		zip = petStore.getZip();
 		phone = petStore.getPhone();
 		
-		if (petStore.getCustomers() != null) {
 			for (Customer customer : petStore.getCustomers()) {
-				if (customer != null) {
 					customers.add(new PetStoreCustomer(customer));
-				}
-			}
 		}
 		
-		if (petStore.getEmployees() != null) {
 			for (Employee employee : petStore.getEmployees()) {
-				if (employee != null) {
 					employees.add(new PetStoreEmployee(employee));
-				}
-			}
 		}
 		
 	}
